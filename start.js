@@ -14,7 +14,7 @@ mongoose.connection.on('error', (err) => {
 
 // Require mongoose models here
 require('./models/User');
-require('./models/List');
+require('./models/Project');
 require('./models/Task');
 require('./models/Label');
 
