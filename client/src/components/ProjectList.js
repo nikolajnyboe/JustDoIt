@@ -23,6 +23,7 @@ const ProjectTitle = styled.p`
 
 class ProjectList extends React.Component {
   name = React.createRef();
+  selectedProject = React.createRef();
 
   addProject = event => {
     event.preventDefault();
@@ -34,6 +35,11 @@ class ProjectList extends React.Component {
     console.log(id);
   }
 
+  handleSelect = () => {
+    const selectedProject = this.selectedProject.current.value;
+    this.props.handleSelect(selectedProject);
+  };
+
   render() {
     return (
       <Grid>
@@ -43,6 +49,11 @@ class ProjectList extends React.Component {
           <input required name="name" type="text" placeholder="Project Name" ref={this.name} />
           <button type="submit">Add Project</button>
         </form>
+        <select onChange={this.handleSelect} ref={this.selectedProject}>
+          {this.props.projects.map(project => (
+            <option key={project._id} value={project._id}>{project.name}</option>
+          ))}
+        </select>
         <List>
           {this.props.projects.map(project => (
             <Listing key={project._id}>
