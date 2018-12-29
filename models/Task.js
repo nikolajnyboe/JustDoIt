@@ -7,7 +7,17 @@ const taskSchema = new Schema({
   title: {
     type: String,
     trim: true,
-    require: 'Please fill out name'
+    required: 'Please fill out title'
+  },
+  project: {
+    type: Schema.ObjectId,
+    ref: 'Project',
+    required: 'Please provide a project id'
+  },
+  completed: {
+    type: Boolean,
+    default: false,
+    required: 'Please provide the completed state (true/false)'
   },
   description: String,
   dueDate: Date,
@@ -23,6 +33,26 @@ const taskSchema = new Schema({
   ]
 });
 
+taskSchema.pre('save', async function () {
+  await Project.findOneAndUpdate(
+    {_id: this.project}, //query
+    {$push: {'tasks': this._id}}, //updates
+    {new: true, runValidators: true, context: 'query'} //options
+  );
+});
+
+taskSchema.pre('remove', async function () {
+  await Project.findOneAndUpdate(
+    {_id: this.project}, //query
+    {$pull: {'tasks': this._id}}, //updates
+    {new: true, runValidators: true, context: 'query'} //options
+  );
+});
+
 taskSchema.plugin(mongodbErrorHandler);
 
 module.exports = mongoose.model('Task', taskSchema);
+
+//Task model must be initieted before requireing other models
+require('./Project');
+const Project = mongoose.model('Project');
