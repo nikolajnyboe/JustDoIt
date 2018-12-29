@@ -27,7 +27,7 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    const user = await get('/api/user-current');
+    const user = await get('/api/users-current');
     if (!user._id) {
       return this.props.history.push('/login');
     }
@@ -46,8 +46,8 @@ class App extends React.Component {
 
   addTask = async title => {
     const task = await post(
-      `/api/task/${this.state.currentProject._id}`,
-      `title=${title}`
+      '/api/tasks',
+      `title=${title}&projectId=${this.state.currentProject._id}`
     );
     const currentProject = {...this.state.currentProject};
     currentProject.tasks.push(task);
@@ -56,7 +56,7 @@ class App extends React.Component {
 
   updateTaskStatus = async (taskId, status) => {
     const updatedTask = await patch(
-      `/api/task/${taskId}`,
+      `/api/tasks/${taskId}`,
       `completed=${status}`
     );
     const currentProject = {...this.state.currentProject};
@@ -70,7 +70,7 @@ class App extends React.Component {
   }
 
   deleteTask = async taskId => {
-    await remove(`/api/task/${taskId}`);
+    await remove(`/api/tasks/${taskId}`);
     const currentProject = {...this.state.currentProject};
     const indexOfDeletedTask = currentProject.tasks.findIndex(task => task._id === taskId)
     currentProject.tasks = [
@@ -82,7 +82,7 @@ class App extends React.Component {
 
   addProject = async name => {
     const project = await post(
-      '/api/project',
+      '/api/projects',
       `name=${name}`
     );
     const user = {...this.state.user};
@@ -103,7 +103,7 @@ class App extends React.Component {
   }
 
   deleteProject = async projectId => {
-    await remove(`/api/project/${projectId}`);
+    await remove(`/api/projects/${projectId}`);
     const user = {...this.state.user};
     const indexOfDeletedProject = user.projects.findIndex(project => project._id === projectId)
     user.projects = [
@@ -120,10 +120,8 @@ class App extends React.Component {
     }
   }
 
-  selectedProject = React.createRef();
-
-  handleSelect = () => {
-    console.log(this.selectedProject.current.value);
+  handleSelect = project => {
+    console.log(project);
   }
 
   render() {
@@ -135,12 +133,8 @@ class App extends React.Component {
           addProject={this.addProject}
           changeProject={this.changeProject}
           deleteProject={this.deleteProject}
+          handleSelect={this.handleSelect}
         />
-        {/* <select onChange={this.handleSelect} ref={this.selectedProject}>
-          {this.state.user.projects.map(project => (
-            <option key={project._id} value={project._id}>{project.name}</option>
-          ))}
-        </select> */}
         <Project
           project={this.state.currentProject}
           addTask={this.addTask}

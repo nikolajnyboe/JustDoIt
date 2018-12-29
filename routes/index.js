@@ -10,8 +10,8 @@ const {catchErrors} = require('../helpers/errorHandling');
 router.post('/api/login', authController.login);
 router.get('/api/logout', authController.logout);
 
+router.get('/api/users-current', catchErrors(userController.getCurrentUser));
 router.get('/api/users/:_id', userController.getUserById);
-router.get('/api/users/current', userController.getCurrentUser);
 router.get('/api/users', userController.getUsers);
 router.post('/api/users', userController.register);
 router.patch('/api/users/:_id', userController.update);
