@@ -3,17 +3,17 @@ const Task = mongoose.model('Task');
 const {convertStringsToIds} = require('../helpers/utils');
 
 exports.getTasksByProject = async (req, res) => {
-  const tasks = await Task.find({project: req.params.projectId}).populate('labels').populate('assignedUser');
+  const tasks = await Task.find({project: req.params._id}).populate('labels').populate('assignedUser');
   res.json(tasks);
 };
 
 exports.getTasksByAssignedUser = async (req, res) => {
-  const tasks = await Task.find({assignedUser: req.params.userId});
+  const tasks = await Task.find({assignedUser: req.params._id});
   res.json(tasks);
 };
 
 exports.createTask = async (req, res) => {
-  const task = new Task({title: req.body.title, project: req.params.projectId});
+  const task = new Task({title: req.body.title, project: req.body.projectId});
   await task.save();
   res.json(task);
 };

@@ -10,26 +10,26 @@ const {catchErrors} = require('../helpers/errorHandling');
 router.post('/api/login', authController.login);
 router.get('/api/logout', authController.logout);
 
-router.get('/api/user/:_id', userController.getUserById);
-router.get('/api/user-current', userController.getCurrentUser);
+router.get('/api/users/:_id', userController.getUserById);
+router.get('/api/users/current', userController.getCurrentUser);
 router.get('/api/users', userController.getUsers);
-router.post('/api/register', userController.register);
-router.patch('/api/user/:_id', userController.update);
-router.delete('/api/user/:_id', userController.deleteUser);
+router.post('/api/users', userController.register);
+router.patch('/api/users/:_id', userController.update);
+router.delete('/api/users/:_id', userController.deleteUser);
 
-router.get('/api/project/:_id', projectController.getProjectById);
-router.get('/api/projects/:_id', projectController.getProjectsByOwnerId);
-router.post('/api/project', authController.isLoggedIn, projectController.createProject);
-router.patch('/api/project/:_id', authController.isLoggedIn, projectController.updateProject);
-router.delete('/api/project/:_id', authController.isLoggedIn, projectController.deleteProject);
+router.get('/api/projects/:_id', projectController.getProjectById);
+router.get('/api/users/:_id/projects', projectController.getProjectsByOwnerId);
+router.post('/api/projects', authController.isLoggedIn, projectController.createProject);
+router.patch('/api/projects/:_id', authController.isLoggedIn, projectController.updateProject);
+router.delete('/api/projects/:_id', authController.isLoggedIn, projectController.deleteProject);
 
-router.get('/api/tasks-by-project/:projectId', authController.isLoggedIn, taskController.getTasksByProject);
-router.get('/api/tasks-by-user/:userId', authController.isLoggedIn, taskController.getTasksByAssignedUser);
-router.post('/api/task/:projectId', authController.isLoggedIn, catchErrors(taskController.createTask));
-router.patch('/api/task/:_id', authController.isLoggedIn, catchErrors(taskController.update));
-router.delete('/api/task/:_id', authController.isLoggedIn, taskController.deleteTask);
+router.get('/api/projects/:_id/tasks', authController.isLoggedIn, taskController.getTasksByProject);
+router.get('/api/users/:_id/tasks', authController.isLoggedIn, taskController.getTasksByAssignedUser);
+router.post('/api/tasks', authController.isLoggedIn, catchErrors(taskController.createTask));
+router.patch('/api/tasks/:_id', authController.isLoggedIn, catchErrors(taskController.update));
+router.delete('/api/tasks/:_id', authController.isLoggedIn, taskController.deleteTask);
 
-router.post('/api/label', authController.isLoggedIn, labelController.create);
-router.delete('/api/label/:_id', authController.isLoggedIn, labelController.delete);
+router.post('/api/labels', authController.isLoggedIn, labelController.create);
+router.delete('/api/labels/:_id', authController.isLoggedIn, labelController.delete);
 
 module.exports = router;
