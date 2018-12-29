@@ -3,7 +3,13 @@ const passport = require('passport');
 exports.login = (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) { return res.json(err); }
-    if (!user) { return res.send('login failed, no user'); }
+    if (!user) {
+      return res.json({
+        error: true,
+        message: 'Login failed, invalid username or password',
+        status: 400
+      });
+    }
     req.login(user, err => {
       if (err) { return res.json(err); }
       return res.json(user);
@@ -23,5 +29,5 @@ exports.isLoggedIn = (req, res, next) => {
 
 exports.logout = (req, res) => {
   req.logout();
-  res.send('You are now logged out.');
+  res.json({loggedOut: true});
 };

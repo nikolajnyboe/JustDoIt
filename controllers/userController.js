@@ -1,16 +1,29 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
-const List = mongoose.model('List');
-const utils = require('../helpers/utils');
 
 exports.getUserById = async (req, res) => {
-  const user = await User.findOne({_id: req.params._id}).populate('lists');
+  const user = await User.findOne({_id: req.params._id}).populate({
+    path: 'projects',
+    populate: {
+      path: 'collaborators',
+      path: 'tasks',
+      populate: {path: 'labels'}
+    }
+  });
   res.json(user);
 };
 
-exports.getCurrentUser = (req, res) => {
-  const user = req.user;
-  if (!user) {return res.send('No current user');}
+exports.getCurrentUser = async (req, res) => {
+  let user = req.user;
+  if (!user) {return res.json({});}
+  user = await User.findOne({_id: user._id}).populate({
+    path: 'projects',
+    populate: {
+      path: 'collaborators',
+      path: 'tasks',
+      populate: {path: 'labels'}
+    }
+  });
   res.json(user);
 };
 
@@ -22,13 +35,20 @@ exports.getUsers = async (req, res) => {
 exports.register = async (req, res) => {
   const user = new User({email: req.body.email, name: req.body.name});
   await User.register(user, req.body.password);
-  await utils.createListForNewUser(user._id);
   res.json(user);
+};
+
+exports.update = async (req, res) => {
+  const updatedUser = await User.findOneAndUpdate(
+    {_id: req.params._id}, //query
+    {...req.body}, //updates
+    {new: true, runValidators: true, context: 'query'} //options
+  );
+  res.json(updatedUser);
 };
 
 exports.deleteUser = async (req, res) => {
   const user = await User.findOne({_id: req.params._id});
-  await List.deleteMany({_id: {$in: user.lists}});
-  await User.deleteOne({_id: user._id});
+  await user.remove();
   res.send(`The user: ${user.name} is deleted.`);
 };
