@@ -15,7 +15,7 @@ exports.getUserById = async (req, res) => {
 
 exports.getCurrentUser = async (req, res) => {
   let user = req.user;
-  if (!user) {return res.json({});}
+  if (!user._id) {return res.json({});}
   user = await User.findOne({_id: user._id}).populate({
     path: 'projects',
     populate: {

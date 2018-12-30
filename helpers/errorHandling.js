@@ -1,6 +1,6 @@
-exports.catchErrors = (fn) => {
+exports.catchErrors = func => {
   return function(req, res, next) {
-    return fn(req, res, next).catch(next);
+    return func(req, res, next).catch(next);
   };
 };
 
