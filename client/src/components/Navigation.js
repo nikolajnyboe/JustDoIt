@@ -31,7 +31,9 @@ class Navigation extends React.Component {
       <Grid>
         <Logo>Just Do It</Logo>
         <User>{this.props.name}</User>
-        <LogoutButton white type="button" onClick={this.props.logout}>Logout</LogoutButton>
+        <LogoutButton white type="button" onClick={this.props.logout}>
+          Logout
+        </LogoutButton>
       </Grid>
     )
   }
