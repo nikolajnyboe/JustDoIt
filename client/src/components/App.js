@@ -127,7 +127,10 @@ class App extends React.Component {
   render() {
     return (
       <AppGrid>
-        <Navigation name={this.state.user.name} logout={this.logout} />
+        <Navigation
+          name={this.state.user.name}
+          logout={this.logout}
+        />
         <ProjectList
           projects={this.state.user.projects}
           addProject={this.addProject}
