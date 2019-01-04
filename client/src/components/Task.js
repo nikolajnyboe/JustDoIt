@@ -2,19 +2,36 @@ import React from 'react';
 import styled from 'styled-components';
 import {Listing, Button, DeleteButton} from './SubComponents';
 
+const TaskListing = styled(Listing)`
+  position: relative;
+`;
+
 const Checkbox = styled.input`
   font-size: 1rem;
   vertical-align: text-bottom;
+  margin-right: 10px;
+  margin-top: 10px;
+`;
+
+const TaskTitle = styled.p`
+  margin: 0;
+  margin-top: 10px;
+`;
+
+const Shared = styled.span`
+  position: absolute;
+  top: -15px;
+  left: 4px;
 `;
 
 class Task extends React.Component {
 
   updateTaskStatus = event => {
-    this.props.updateTaskStatus(this.props.details._id, event.target.checked);
+    this.props.updateTaskStatus(this.props.details._id, {completed: event.target.checked});
   }
 
-  editTask = () => {
-    console.log(this.props.details._id);
+  setEditState = () => {
+    this.props.setEditState(this.props.details._id);
   }
 
   deleteTask = () => {
@@ -22,20 +39,23 @@ class Task extends React.Component {
   }
 
   render() {
-    const {title, completed} = this.props.details;
+    const {title, completed, assignedUser} = this.props.details;
 
     return(
-      <Listing>
+      <TaskListing>
         <Checkbox
           name="completed"
           type="checkbox"
           checked={completed}
           onChange={this.updateTaskStatus}
         />
-        {title}
-        <Button type="button" onClick={this.editTask}>Edit</Button>
+        <TaskTitle>{title}</TaskTitle>
+        {!assignedUser ? null : (
+          <Shared>👤 {assignedUser.name}</Shared>
+        )}
+        <Button type="button" onClick={this.setEditState}>Edit</Button>
         <DeleteButton type="button" onClick={this.deleteTask}>Delete</DeleteButton>
-      </Listing>
+      </TaskListing>
     )
   }
 };

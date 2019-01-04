@@ -19,7 +19,10 @@ const taskSchema = new Schema({
     default: false,
     required: 'Please provide the completed state (true/false)'
   },
-  description: String,
+  description: {
+    type: String,
+    default: ''
+  },
   dueDate: Date,
   assignedUser: {
     type: Schema.ObjectId,

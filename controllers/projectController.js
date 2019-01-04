@@ -18,13 +18,24 @@ exports.createProject = async (req, res) => {
 };
 
 exports.updateProject = async (req, res) => {
+  const updates = {...req.body};
   const project = await Project.findOne({_id: req.params._id});
   if (!project.owner._id.equals(req.user._id)) {
-    return res.json('Only the owner can update a project.');
+    throw new Error('Only the owner can edit a project');
+  }
+  if (updates.owner) {
+    updates.owner = mongoose.Types.ObjectId(updates.owner);
+  }
+  if (updates.collaborators) {
+    const convertedCollaborators = []
+    for (const collaborator of updates.collaborators) {
+      convertedCollaborator = mongoose.Types.ObjectId(collaborator._id);
+    }
+    updates.owner = mongoose.Types.ObjectId(updates.owner);
   }
   const updatedProject = await Project.findOneAndUpdate(
     {_id: project._id}, //query
-    {name: req.body.name}, //updates
+    updates, //updates
     {new: true, runValidators: true, context: 'query'} //options
   );
   res.json(updatedProject);

@@ -26,11 +26,11 @@ exports.update = async (req, res) => {
   if (updates.project) {
     updates.project = mongoose.Types.ObjectId(updates.project);
   }
-  const updatedTask = await Task.findOneAndUpdate(
+  let updatedTask = await Task.findOneAndUpdate(
     {_id: req.params._id},
     updates,
     {new: true, runValidators: true, context: 'query'}
-  );
+  ).populate('labels').populate('assignedUser');
   res.json(updatedTask);
 };
 

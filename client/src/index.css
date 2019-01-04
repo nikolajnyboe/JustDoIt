@@ -6,4 +6,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: #525f7f;
+  background-color: #f6f9fc;
+}
+
+*:focus {
+  outline: none;
 }

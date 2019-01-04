@@ -7,12 +7,11 @@ import Project from './Project';
 
 const AppGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1.1fr 1.9fr;
   grid-template-rows: 80px auto;
   grid-template-areas:
-    "nav nav nav"
-    "list project project";
-  grid-gap: 15px;
+    "nav nav"
+    "list project";
   min-height: 100vh;
 `;
 
@@ -55,9 +54,24 @@ class App extends React.Component {
   }
 
   updateTaskStatus = async (taskId, status) => {
+    const updatedTaskStatus = await patch(
+      `/api/tasks/${taskId}`,
+      status
+    );
+    const currentProject = {...this.state.currentProject};
+    const indexOfUpdatedTask = currentProject.tasks.findIndex(task => task._id === taskId)
+    currentProject.tasks = [
+      ...currentProject.tasks.slice(0, indexOfUpdatedTask),
+      updatedTaskStatus,
+      ...currentProject.tasks.slice(indexOfUpdatedTask + 1)
+    ];
+    this.setState({currentProject});
+  }
+
+  editTask = async (taskId, updates) => {
     const updatedTask = await patch(
       `/api/tasks/${taskId}`,
-      `completed=${status}`
+      updates
     );
     const currentProject = {...this.state.currentProject};
     const indexOfUpdatedTask = currentProject.tasks.findIndex(task => task._id === taskId)
@@ -102,6 +116,21 @@ class App extends React.Component {
     this.setState({user, currentProject: project});
   }
 
+  editProject = async (projectId, updates) => {
+    const updatedProject = await patch(
+      `/api/projects/${projectId}`,
+      updates
+    );
+    const user = {...this.state.user};
+    const indexOfUpdatedProject = user.projects.findIndex(project => project._id === projectId)
+    user.projects = [
+      ...user.projects.slice(0, indexOfUpdatedProject),
+      updatedProject,
+      ...user.projects.slice(indexOfUpdatedProject + 1)
+    ];
+    this.setState({user});
+  }
+
   deleteProject = async projectId => {
     await remove(`/api/projects/${projectId}`);
     const user = {...this.state.user};
@@ -120,10 +149,6 @@ class App extends React.Component {
     }
   }
 
-  handleSelect = project => {
-    console.log(project);
-  }
-
   render() {
     return (
       <AppGrid>
@@ -135,12 +160,14 @@ class App extends React.Component {
           projects={this.state.user.projects}
           addProject={this.addProject}
           changeProject={this.changeProject}
+          editProject={this.editProject}
           deleteProject={this.deleteProject}
           handleSelect={this.handleSelect}
         />
         <Project
           project={this.state.currentProject}
           addTask={this.addTask}
+          editTask= {this.editTask}
           updateTaskStatus={this.updateTaskStatus}
           deleteTask={this.deleteTask}
         />

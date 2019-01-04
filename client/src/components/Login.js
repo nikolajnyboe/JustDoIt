@@ -1,5 +1,28 @@
 import React from 'react';
+import styled from 'styled-components';
 import {post} from '../helpers/utils';
+import Navigation from './Navigation';
+import {Button, Input} from './SubComponents';
+
+const LoginGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 80px auto;
+  grid-template-areas:
+    "nav nav nav"
+    ". form .";
+  min-height: 100vh;
+`;
+
+const Form = styled.form`
+  grid-area: form;
+`;
+
+const LoginInput = styled(Input)`
+  width: calc(100% - 28px);
+  margin: 0;
+  margin-bottom: 20px;
+`;
 
 class App extends React.Component {
 
@@ -22,15 +45,18 @@ class App extends React.Component {
 
   render() {
     return (
-      <>
-        <form onSubmit={this.login}>
-          <h2>Please login</h2>
-          <input type="text" required placeholder="Email" ref={this.email} />
-          <input type="password" required placeholder="Password" ref={this.password} />
-          <button type="submit">Login</button>
-        </form>
-        <p>{this.state.error}</p>
-      </>
+      <LoginGrid>
+        <Navigation />
+        <Form onSubmit={this.login}>
+          <h2>Login</h2>
+          <LoginInput type="text" required placeholder="Email" ref={this.email} />
+          <LoginInput type="password" required placeholder="Password" ref={this.password} />
+          {!this.state.error ? null : (
+            <p>{this.state.error}</p>
+          )}
+          <Button type="submit">Login</Button>
+        </Form>
+      </LoginGrid>
     )
   }
 };

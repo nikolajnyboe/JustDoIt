@@ -1,3 +1,5 @@
+import stringify from 'qs-stringify';
+
 export const get = async url => {
   const request = await fetch(url);
   const response = await request.json();
@@ -17,6 +19,8 @@ export const post = async (url, body) => {
 };
 
 export const patch = async (url, body) => {
+  body = stringify(body);
+  console.log(body);
   const request = await fetch(url, {
     method: 'PATCH',
     body: body,

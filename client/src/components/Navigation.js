@@ -1,39 +1,48 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {Button} from './SubComponents';
 
 const Grid = styled.div`
   grid-area: nav;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-areas: "logo . . user logout";
-  justify-items: center;
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
   color: #fff;
   background-color: #0074D9;
+  padding: 0 20px;
+  margin-bottom: 20px;
 `;
 
-const Logo = styled.h1`
-  grid-area: logo;
+const Logo = styled(Link)`
+  color: inherit;
+  text-decoration: none;
+  margin-right: auto;
 `;
 
-const User = styled.p`
-  grid-area: user;
+const User = styled(Link)`
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
 `;
 
 const LogoutButton = styled(Button)`
-  grid-area: logout;
+  margin: 0 0 0 20px;
 `;
 
 class Navigation extends React.Component {
   render() {
     return(
       <Grid>
-        <Logo>Just Do It</Logo>
-        <User>{this.props.name}</User>
-        <LogoutButton white type="button" onClick={this.props.logout}>
-          Logout
-        </LogoutButton>
+        <Logo to='/'><h1>Just Do It</h1></Logo>
+        {!this.props.name ? null : (
+          <User to='/profile'>{this.props.name}</User>
+        )}
+        {!this.props.logout ? null : (
+          <LogoutButton type="button" onClick={this.props.logout}>
+            Log out
+          </LogoutButton>
+        )}
       </Grid>
     )
   }

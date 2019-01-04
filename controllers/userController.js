@@ -4,11 +4,17 @@ const User = mongoose.model('User');
 exports.getUserById = async (req, res) => {
   const user = await User.findOne({_id: req.params._id}).populate({
     path: 'projects',
-    populate: {
-      path: 'collaborators',
-      path: 'tasks',
-      populate: {path: 'labels'}
-    }
+    populate: [
+      {path: 'owner'},
+      {path: 'collaborators'},
+      {
+        path: 'tasks',
+        populate: [
+          {path: 'labels'},
+          {path: 'assignedUser'}
+        ]
+      }
+    ]
   });
   res.json(user);
 };
@@ -18,11 +24,17 @@ exports.getCurrentUser = async (req, res) => {
   if (!user._id) {return res.json({});}
   user = await User.findOne({_id: user._id}).populate({
     path: 'projects',
-    populate: {
-      path: 'collaborators',
-      path: 'tasks',
-      populate: {path: 'labels'}
-    }
+    populate: [
+      {path: 'owner'},
+      {path: 'collaborators'},
+      {
+        path: 'tasks',
+        populate: [
+          {path: 'labels'},
+          {path: 'assignedUser'}
+        ]
+      }
+    ]
   });
   res.json(user);
 };
