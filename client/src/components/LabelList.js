@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Listing, Button, DeleteButton, Input} from './SubComponents';
-import EditProjectForm from './EditProjectForm';
+import EditLabelForm from './EditLabelForm';
 
 const Container = styled.div`
-  grid-area: projectlist;
+  grid-area: labellist;
 `;
 
 const Title = styled.h2`
@@ -16,11 +16,7 @@ const List = styled.ul`
   padding: 0;
 `;
 
-const ProjectListing = styled(Listing)`
-  position: relative;
-`;
-
-const ProjectTitle = styled.p`
+const LabelTitle = styled.p`
   display: inline-block;
   margin: 0;
   margin-top: 10px;
@@ -35,18 +31,75 @@ const ProjectTitle = styled.p`
   }
 `;
 
-const Shared = styled.span`
-  position: absolute;
-  top: -15px;
-`;
+class LabelList extends React.Component {
+  state = {
+    showNewLabel: false,
+    editLabel: null
+  }
 
-class ProjectList extends React.Component {
+  title = React.createRef();
+
+  addLabel = event => {
+    event.preventDefault();
+    const title = this.title.current.value;
+    this.props.addLabel(title);
+    this.setState({showNewLabel: false});
+  }
+
+  setEditState = id => {
+    this.setState({editLabel: id});
+  }
+
+  resetEditState = () => {
+    this.setState({editLabel: null});
+  }
+
+  render() {
+    return(
+      <Container>
+        <Title>Labels</Title>
+        <Button type="button" onClick={() => this.setState({showNewLabel: !this.state.showNewLabel})}>New</Button>
+        {!this.state.showNewLabel ? null : (
+          <form onSubmit={this.addLabel}>
+            <Input required name="title" type="text" placeholder="Label Title" ref={this.title} />
+            <Button type="submit">Save</Button>
+          </form>
+        )}
+        <List>
+          {this.props.labels.map(label => (
+            this.state.editLabel === label._id ? (
+              <EditLabelForm
+                key={label._id}
+                label={label}
+                editLabel={this.props.editLabel}
+                resetEditState={this.resetEditState}
+              />
+              ) : (
+              <Listing key={label._id}>
+                <LabelTitle onClick={() => this.props.changeLabel(label)}>{label.title}</LabelTitle>
+                <Button type="button" onClick={() => this.setEditState(label._id)}>Edit</Button>
+                <DeleteButton type="button" onClick={() => this.props.deleteLabel(label._id)}>Delete</DeleteButton>
+              </Listing>
+            )
+          ))}
+        </List>
+      </Container>
+    )
+  }
+};
+
+export default LabelList;
+
+
+
+/* class ProjectList extends React.Component {
   state = {
     showNewProject: false,
     editProject: null
   }
 
   name = React.createRef();
+  selectedProject = React.createRef();
 
   addProject = event => {
     event.preventDefault();
@@ -99,6 +152,4 @@ class ProjectList extends React.Component {
     )
   }
 
-};
-
-export default ProjectList;
+}; */

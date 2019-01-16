@@ -25,11 +25,14 @@ router.delete('/api/projects/:_id', authController.isLoggedIn, catchErrors(proje
 
 router.get('/api/projects/:_id/tasks', authController.isLoggedIn, catchErrors(taskController.getTasksByProject));
 router.get('/api/users/:_id/tasks', authController.isLoggedIn, catchErrors(taskController.getTasksByAssignedUser));
+router.get('/api/labels/:_id/tasks', authController.isLoggedIn, catchErrors(taskController.getTasksByLabel));
 router.post('/api/tasks', authController.isLoggedIn, catchErrors(taskController.createTask));
 router.patch('/api/tasks/:_id', authController.isLoggedIn, catchErrors(taskController.update));
 router.delete('/api/tasks/:_id', authController.isLoggedIn, catchErrors(taskController.deleteTask));
 
+router.get('/api/labels', authController.isLoggedIn, catchErrors(labelController.getLabels));
 router.post('/api/labels', authController.isLoggedIn, catchErrors(labelController.create));
+router.patch('/api/labels/:_id', authController.isLoggedIn, catchErrors(labelController.edit));
 router.delete('/api/labels/:_id', authController.isLoggedIn, catchErrors(labelController.delete));
 
 module.exports = router;

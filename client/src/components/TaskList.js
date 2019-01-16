@@ -36,6 +36,7 @@ class TaskList extends React.Component {
           ) : (
             <Task
               key={task._id}
+              type={this.props.type}
               details={task}
               collaborators={this.props.collaborators}
               updateTaskStatus={this.props.updateTaskStatus}

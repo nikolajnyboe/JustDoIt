@@ -1,9 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import {get} from '../helpers/utils';
-import {Listing, Input, Button, DeleteButton, Select} from './SubComponents';
+import {Listing, Input, Button, DeleteButton, MultiSelect} from './SubComponents';
 
 const EditForm = styled.form`
+  width: 100%;
+`;
+
+const Container = styled.div`
   display: flex;
   width: 100%;
 `;
@@ -12,33 +16,33 @@ const SaveButton = styled(Button)`
   margin-left: auto;
 `;
 
+
+
 class EditProjectForm extends React.Component {
   state = {
     name: '',
     users: [],
-    selectedUser: '',
-    selectionHasChanged: false
+    selectedUsers: [],
+    isLoadingUsers: true
   }
 
   async componentDidMount() {
-    const users = await get('/api/users');
     this.setState({
       name: this.props.project.name,
+      selectedUsers: this.props.project.collaborators
+    });
+    let users = await get('/api/users');
+    users = users.filter(user => user._id !== this.props.project.owner._id);
+    this.setState({
       users,
-      selectedUser: users[0]._id
-    })
+      isLoadingUsers: false
+    });
   }
 
   saveProject = event => {
     event.preventDefault();
-    const collaborators = [...this.props.project.collaborators];
-    if (this.state.selectionHasChanged) {
-      const indexOfSelectedUser = this.state.users.findIndex(user => user._id === this.state.selectedUser);
-      const selectedUser = this.state.users[indexOfSelectedUser];
-      collaborators.push(selectedUser);
-    }
+    const collaborators = this.state.selectedUsers.length > 0 ? this.state.selectedUsers : 'undefined';
     const updatedProject = {
-      ...this.props.project,
       name: this.state.name,
       collaborators
     };
@@ -47,25 +51,38 @@ class EditProjectForm extends React.Component {
   }
 
   handleChange = event => {
-    if (event.target.name === 'selectedUser') {
-      return this.setState({[event.target.name]: event.target.value, selectionHasChanged: true});
-    }
     this.setState({[event.target.name]: event.target.value});
+  }
+
+  handleSelect = selectedUsers => {
+    this.setState({selectedUsers});
   }
 
   render() {
     return (
       <Listing>
         <EditForm onSubmit={this.saveProject}>
-          <Input type='text' name='name' value={this.state.name} onChange={this.handleChange} />
-          <Select name='selectedUser' value={this.state.selectedUser} onChange={this.handleChange}>
-            {this.state.users.map(user => (
-              <option key={user._id} value={user._id}>{user.name}</option>
-            ))}
-          </Select>
-          <SaveButton type='submit'>Save</SaveButton>
+          <Container>
+            <Input
+              type='text'
+              name='name'
+              value={this.state.name}
+              onChange={this.handleChange}
+              placeholder='Project name'
+            />
+            <SaveButton type='submit'>Save</SaveButton>
+            <DeleteButton type='button' onClick={this.props.resetEditState}>Cancel</DeleteButton>
+          </Container>
+          <MultiSelect
+            value={this.state.selectedUsers}
+            onChange={this.handleSelect}
+            options={this.state.users}
+            placeholder='Add collaborators'
+            getOptionLabel={(user) => user.name}
+            getOptionValue={(user) => user._id}
+            isLoading={this.state.isLoadingUsers}
+          />
         </EditForm>
-        <DeleteButton onClick={this.props.resetEditState}>Cancel</DeleteButton>
       </Listing>
     )
   }

@@ -2,9 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import TaskList from './TaskList';
 import {Button, Input} from './SubComponents';
+import {get} from '../helpers/utils';
 
 const Grid = styled.div`
-  grid-area: project;
+  grid-area: main;
   padding: 0 20px;
 `;
 
@@ -15,10 +16,19 @@ const Title = styled.h2`
 
 class Project extends React.Component {
   state = {
+    tasks: [],
     showNewTask: false
   }
 
-  title = React.createRef();
+  async componentDidUpdate(prevProps) {
+    if (this.props.project !== prevProps.project) {
+      this.setState({tasks: this.props.project.tasks});
+      if (this.props.project.type === 'label') {
+        const tasks = await get(`/api/labels/${this.props.project._id}/tasks`);
+        this.setState({tasks});
+      }
+    }
+  }
 
   addTask = event => {
     event.preventDefault();
@@ -27,13 +37,18 @@ class Project extends React.Component {
     this.setState({showNewTask: false});
   }
 
+  title = React.createRef();
+
   render() {
-    const {name, tasks, collaborators, owner} = this.props.project;
+    const {name, owner, collaborators, type} = this.props.project;
+    const tasks = this.state.tasks;
 
     return(
       <Grid>
         <Title>{name}</Title>
-        <Button type="button" onClick={() => this.setState({showNewTask: !this.state.showNewTask})}>New</Button>
+        {type === 'label' ? null : (
+          <Button type="button" onClick={() => this.setState({showNewTask: !this.state.showNewTask})}>New</Button>
+        )}
         {!this.state.showNewTask ? null : (
           <form onSubmit={this.addTask}>
             <Input required name="title" type="text" placeholder="Task title" ref={this.title} />
@@ -41,6 +56,7 @@ class Project extends React.Component {
           </form>
         )}
         <TaskList
+          type={type}
           tasks={tasks}
           owner={owner}
           collaborators={collaborators}

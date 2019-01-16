@@ -1,4 +1,4 @@
-import stringify from 'qs-stringify';
+import qs from 'qs';
 
 export const get = async url => {
   const request = await fetch(url);
@@ -19,12 +19,11 @@ export const post = async (url, body) => {
 };
 
 export const patch = async (url, body) => {
-  body = stringify(body);
-  console.log(body);
+  body = qs.stringify(body);
   const request = await fetch(url, {
     method: 'PATCH',
     body: body,
-    headers:{
+    headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     }
   });
@@ -36,4 +35,14 @@ export const remove = async url => {
   const request = await fetch(url, {method: 'DELETE'});
   const response = await request.json();
   return response;
+};
+
+export const formatDate = date => {
+  if (!date || Object.prototype.toString.call(date) !== "[object Date]") return null;
+  date = new Date(date);
+  const displayDate = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+  const displayMonth = date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` : date.getMonth()+1;
+  const displayYear = date.getFullYear();
+  const fullDisplayDate = `${displayDate}/${displayMonth}/${displayYear}`;
+  return fullDisplayDate;
 };

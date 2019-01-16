@@ -1,8 +1,19 @@
 const mongoose = require('mongoose');
 const Project = mongoose.model('Project');
+const {convertToId, convertToArrayOfIds} = require('../helpers/utils');
 
 exports.getProjectById = async (req, res) => {
-  const project = await Project.findOne({_id: req.params._id}).populate('tasks');
+  const project = await Project.findOne({_id: req.params._id}).populate([
+    {
+      path: 'tasks',
+      populate: [
+        {path: 'labels'},
+        {path: 'assignedUser'}
+      ]
+    },
+    {path: 'collaborators'},
+    {path: 'owner'}
+  ]);
   res.json(project);
 };
 
@@ -12,8 +23,9 @@ exports.getProjectsByOwnerId = async (req, res) => {
 };
 
 exports.createProject = async (req, res) => {
-  const project = new Project({name: req.body.name, owner: req.user._id});
+  let project = new Project({name: req.body.name, owner: req.user._id});
   await project.save();
+  project = await Project.populate(project, {path: 'owner'});
   res.json(project);
 };
 
@@ -24,20 +36,20 @@ exports.updateProject = async (req, res) => {
     throw new Error('Only the owner can edit a project');
   }
   if (updates.owner) {
-    updates.owner = mongoose.Types.ObjectId(updates.owner);
+    updates.owner = convertToId(updates.owner);
   }
   if (updates.collaborators) {
-    const convertedCollaborators = []
-    for (const collaborator of updates.collaborators) {
-      convertedCollaborator = mongoose.Types.ObjectId(collaborator._id);
+    if (updates.collaborators === 'undefined') {
+      updates.collaborators = [];
+    } else {
+      updates.collaborators = convertToArrayOfIds(updates.collaborators);
     }
-    updates.owner = mongoose.Types.ObjectId(updates.owner);
   }
   const updatedProject = await Project.findOneAndUpdate(
     {_id: project._id}, //query
     updates, //updates
     {new: true, runValidators: true, context: 'query'} //options
-  );
+  ).populate([{path: 'tasks'}, {path: 'collaborators'}, {path: 'owner'}]);
   res.json(updatedProject);
 };
 

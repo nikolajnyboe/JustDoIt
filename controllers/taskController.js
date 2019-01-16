@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Task = mongoose.model('Task');
-const {convertStringsToIds} = require('../helpers/utils');
+const {convertToId, convertToArrayOfIds} = require('../helpers/utils');
 
 exports.getTasksByProject = async (req, res) => {
   const tasks = await Task.find({project: req.params._id}).populate('labels').populate('assignedUser');
@@ -8,7 +8,12 @@ exports.getTasksByProject = async (req, res) => {
 };
 
 exports.getTasksByAssignedUser = async (req, res) => {
-  const tasks = await Task.find({assignedUser: req.params._id});
+  const tasks = await Task.find({assignedUser: req.params._id}).populate('labels').populate('assignedUser');
+  res.json(tasks);
+};
+
+exports.getTasksByLabel = async (req, res) => {
+  const tasks = await Task.find({labels: req.params._id}).populate('labels').populate('assignedUser');
   res.json(tasks);
 };
 
@@ -20,13 +25,31 @@ exports.createTask = async (req, res) => {
 
 exports.update = async (req, res) => {
   const updates = {...req.body};
-  if (updates.labels) {
-    updates.labels = convertStringsToIds(updates.labels);
-  }
   if (updates.project) {
     updates.project = mongoose.Types.ObjectId(updates.project);
   }
-  let updatedTask = await Task.findOneAndUpdate(
+  if (updates.dueDate) {
+    if (updates.dueDate === 'undefined') {
+      updates.dueDate = undefined;
+    } else {
+      updates.dueDate = new Date(updates.dueDate);
+    }
+  }
+  if (updates.assignedUser) {
+    if (updates.assignedUser === 'undefined') {
+      updates.assignedUser = undefined;
+    } else {
+      updates.assignedUser = convertToId(updates.assignedUser);
+    }
+  }
+  if (updates.labels) {
+    if (updates.labels === 'undefined') {
+      updates.labels = [];
+    } else {
+      updates.labels = convertToArrayOfIds(updates.labels);
+    }
+  }
+  const updatedTask = await Task.findOneAndUpdate(
     {_id: req.params._id},
     updates,
     {new: true, runValidators: true, context: 'query'}
