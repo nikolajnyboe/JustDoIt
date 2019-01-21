@@ -17,27 +17,27 @@ const SaveButton = styled(Button)`
 
 class EditLabelForm extends React.Component {
   state = {
-    title: ''
-  }
+    title: '',
+  };
 
   componentDidMount() {
     this.setState({
-      title: this.props.label.title
+      title: this.props.label.title,
     });
   }
 
   saveLabel = event => {
     event.preventDefault();
     const updatedLabel = {
-      title: this.state.title
+      title: this.state.title,
     };
     this.props.editLabel(this.props.label._id, updatedLabel);
     this.props.resetEditState();
-  }
+  };
 
   handleChange = event => {
     this.setState({[event.target.name]: event.target.value});
-  }
+  };
 
   render() {
     return (
@@ -52,12 +52,18 @@ class EditLabelForm extends React.Component {
               placeholder='Label title'
             />
             <SaveButton type='submit'>Save</SaveButton>
-            <DeleteButton type='button' onClick={this.props.resetEditState}>Cancel</DeleteButton>
+            <DeleteButton
+              marginLeft
+              type='button'
+              onClick={this.props.resetEditState}
+            >
+              Cancel
+            </DeleteButton>
           </Container>
         </EditForm>
       </Listing>
-    )
+    );
   }
-};
+}
 
 export default EditLabelForm;

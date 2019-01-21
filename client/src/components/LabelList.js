@@ -78,7 +78,7 @@ class LabelList extends React.Component {
               <Listing key={label._id}>
                 <LabelTitle onClick={() => this.props.changeLabel(label)}>{label.title}</LabelTitle>
                 <Button type="button" onClick={() => this.setEditState(label._id)}>Edit</Button>
-                <DeleteButton type="button" onClick={() => this.props.deleteLabel(label._id)}>Delete</DeleteButton>
+                <DeleteButton marginLeft type="button" onClick={() => this.props.deleteLabel(label._id)}>Delete</DeleteButton>
               </Listing>
             )
           ))}

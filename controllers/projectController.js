@@ -17,9 +17,30 @@ exports.getProjectById = async (req, res) => {
   res.json(project);
 };
 
-exports.getProjectsByOwnerId = async (req, res) => {
-  const projects = await Project.find({owner: req.params._id});
-  res.json(projects);
+exports.getProjectsByUserId = async (req, res) => {
+  const projects = await Project.find({owner: req.params._id}).populate([
+    {
+      path: 'tasks',
+      populate: [
+        {path: 'labels'},
+        {path: 'assignedUser'}
+      ]
+    },
+    {path: 'collaborators'},
+    {path: 'owner'}
+  ]);
+  const sharedProjects = await Project.find({collaborators: req.params._id}).populate([
+    {
+      path: 'tasks',
+      populate: [
+        {path: 'labels'},
+        {path: 'assignedUser'}
+      ]
+    },
+    {path: 'collaborators'},
+    {path: 'owner'}
+  ]);
+  res.json([...projects, ...sharedProjects]);
 };
 
 exports.createProject = async (req, res) => {
@@ -49,7 +70,17 @@ exports.updateProject = async (req, res) => {
     {_id: project._id}, //query
     updates, //updates
     {new: true, runValidators: true, context: 'query'} //options
-  ).populate([{path: 'tasks'}, {path: 'collaborators'}, {path: 'owner'}]);
+  ).populate([
+    {
+      path: 'tasks',
+      populate: [
+        {path: 'labels'},
+        {path: 'assignedUser'}
+      ]
+    },
+    {path: 'collaborators'},
+    {path: 'owner'}
+  ]);
   res.json(updatedProject);
 };
 

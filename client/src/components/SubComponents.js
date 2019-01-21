@@ -8,7 +8,7 @@ export const Button = styled.button`
   line-height: 38px;
   padding: 0 14px;
   margin: 0;
-  margin-left: 20px;
+  margin-left: ${props => props.marginLeft ? '20px' : '0'};
   box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
   background: #fff;
   border: none;
@@ -123,7 +123,8 @@ const multiSelectStyles = {
   }),
   multiValueLabel: (provided, state) => ({
     ...provided,
-    color: '#fff'
+    color: '#fff',
+    fontWeight: 600
   }),
   multiValueRemove: (provided, state) => ({
     ...provided,

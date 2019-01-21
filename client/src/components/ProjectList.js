@@ -40,6 +40,12 @@ const Shared = styled.span`
   top: -15px;
 `;
 
+const SharedNumber = styled.span`
+  font-weight: 600;
+  font-size: 85%;
+  vertical-align: super;
+`;
+
 class ProjectList extends React.Component {
   state = {
     showNewProject: false,
@@ -83,14 +89,18 @@ class ProjectList extends React.Component {
                 editProject={this.props.editProject}
                 resetEditState={this.resetEditState}
               />
-              ) : (
+            ) : (
               <ProjectListing key={project._id}>
                 {project.collaborators.length > 0 ? (
-                  <Shared><span role='img' aria-label='Shared project'>👥 {project.collaborators.length}</span></Shared>
+                  <Shared><span role='img' aria-label='Shared project'>👥</span><SharedNumber>{project.collaborators.length}</SharedNumber></Shared>
                 ) : null}
                 <ProjectTitle onClick={() => this.props.changeProject(project)}>{project.name}</ProjectTitle>
-                <Button type="button" onClick={() => this.setEditState(project._id)}>Edit</Button>
-                <DeleteButton type="button" onClick={() => this.props.deleteProject(project._id)}>Delete</DeleteButton>
+                {this.props.user._id !== project.owner._id ? null : (
+                  <>
+                    <Button type="button" onClick={() => this.setEditState(project._id)}>Edit</Button>
+                    <DeleteButton marginLeft type="button" onClick={() => this.props.deleteProject(project._id)}>Delete</DeleteButton>
+                  </>
+                )}
               </ProjectListing>
             )
           ))}

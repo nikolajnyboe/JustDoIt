@@ -127,7 +127,7 @@ class EditTaskForm extends React.Component {
               dateFormat="dd/MM/yyyy"
             ></CustomDatePicker>
             <SaveButton type='submit'>Save</SaveButton>
-            <DeleteButton type='button' onClick={this.props.resetEditTask}>Cancel</DeleteButton>
+            <DeleteButton marginLeft type='button' onClick={this.props.resetEditTask}>Cancel</DeleteButton>
           </Container>
           <ContainerGrid>
             <SingleSelect

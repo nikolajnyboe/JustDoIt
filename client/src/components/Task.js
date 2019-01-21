@@ -72,7 +72,7 @@ class Task extends React.Component {
         />
         <TaskTitle>{title}</TaskTitle>
         {!dueDate ? null : (
-          <DueDate>{formatDate(dueDate)}</DueDate>
+          <DueDate>{formatDate(new Date(dueDate))}</DueDate>
         )}
         {!assignedUser ? null : (
           <Assigned><span role="img" aria-label={`The task is assigned to ${assignedUser.name}`}>👤</span> {assignedUser.name}</Assigned>
@@ -83,9 +83,9 @@ class Task extends React.Component {
           ))
         )}
         {this.props.type === 'label' ? null : (
-          <Button type="button" onClick={this.setEditState}>Edit</Button>
+          <Button marginLeft type="button" onClick={this.setEditState}>Edit</Button>
         )}
-        <DeleteButton type="button" onClick={this.deleteTask}>Delete</DeleteButton>
+        <DeleteButton marginLeft type="button" onClick={this.deleteTask}>Delete</DeleteButton>
       </TaskListing>
     )
   }

@@ -71,7 +71,7 @@ class EditProjectForm extends React.Component {
               placeholder='Project name'
             />
             <SaveButton type='submit'>Save</SaveButton>
-            <DeleteButton type='button' onClick={this.props.resetEditState}>Cancel</DeleteButton>
+            <DeleteButton marginLeft type='button' onClick={this.props.resetEditState}>Cancel</DeleteButton>
           </Container>
           <MultiSelect
             value={this.state.selectedUsers}

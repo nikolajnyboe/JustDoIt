@@ -18,7 +18,7 @@ router.patch('/api/users/:_id', catchErrors(userController.update));
 router.delete('/api/users/:_id', catchErrors(userController.deleteUser));
 
 router.get('/api/projects/:_id', catchErrors(projectController.getProjectById));
-router.get('/api/users/:_id/projects', catchErrors(projectController.getProjectsByOwnerId));
+router.get('/api/users/:_id/projects', catchErrors(projectController.getProjectsByUserId));
 router.post('/api/projects', authController.isLoggedIn, catchErrors(projectController.createProject));
 router.patch('/api/projects/:_id', authController.isLoggedIn, catchErrors(projectController.updateProject));
 router.delete('/api/projects/:_id', authController.isLoggedIn, catchErrors(projectController.deleteProject));

@@ -22,6 +22,7 @@ class Sidebar extends React.Component {
     return(
       <Grid>
         <ProjectList
+          user={this.props.user}
           projects={this.props.projects}
           changeProject={this.props.changeProject}
           addProject={this.props.addProject}
